@@ -25,7 +25,7 @@
       .buttons-container
         button.login-button(type='submit')
           | Ingresar
-        button.register(type='button')
+        router-link.register(:to='{ name: "signUp" }')
           | Registrarse
 </template>
 
@@ -48,7 +48,7 @@ const login = {
         sessionService.login(this.email, this.password).then((response) => {
           this.showError = false
           auth.login(response)
-          // this.$router.push({ name: 'dashboard' })
+          this.$router.push({ name: 'dashboard' })
         }).catch(() => {
           this.showError = true
         })

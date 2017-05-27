@@ -1,12 +1,10 @@
 const auth = {}
 
 auth.login = function (data) {
-  localStorage.setItem('renew_id', data.renew_id)
   localStorage.setItem('access_token', data.access_token)
 }
 
 auth.logout = function () {
-  localStorage.removeItem('renew_id')
   localStorage.removeItem('access_token')
 }
 
@@ -16,7 +14,7 @@ auth.isLoggedIn = function () {
 
 auth.getAuthHeader = function () {
   return {
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    Authorization: `${localStorage.getItem('access_token')}`
   }
 }
 
