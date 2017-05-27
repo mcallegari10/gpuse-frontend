@@ -7,7 +7,7 @@
         | El usuario y/o contraseña son incorrectos
       label.data-label(for='email')
         | Email
-      input.data-input(type='email' v-model='email' v-validate='"required|email"' name='email')
+      input.data-input(type='text' v-model='email' v-validate='"required"' name='email')
       .errors(v-if='errors.has("email")')
         span.error(v-if='errors.firstRule("email") === "required"')
           | El campo es requerido

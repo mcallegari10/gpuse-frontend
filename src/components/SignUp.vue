@@ -2,6 +2,8 @@
   .sign-up
     h2.title
       | Registrarse
+    h2.error(v-if='showError')
+      | Hubo un error!
     form(@submit.prevent='signUp' novalidate)
       label.data-label(for='email')
         | Email
@@ -30,7 +32,8 @@ const signUp = {
       email: '',
       password: '',
       confirmPassword: '',
-      ethAddress: ''
+      ethAddress: '',
+      showError: false
     }
   },
   computed: {
@@ -41,7 +44,11 @@ const signUp = {
   methods: {
     signUp() {
       sessionService.signUp(this.email, this.password).then((response) => {
+        debugger
         this.$router.push({ name: 'dashboard' })
+      }).catch((error) => {
+        debugger
+        this.showError = true
       })
     }
   }
