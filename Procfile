@@ -1,1 +1,1 @@
-  web: yarn && yarn app.js
+  web: yarn && yarn start
