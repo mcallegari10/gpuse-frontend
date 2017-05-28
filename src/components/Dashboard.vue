@@ -61,7 +61,8 @@ const dashboard = {
       bitcoinAddress: 'mm9vjEnJth96Zh9XNkmLizqyPAekCUWALt',
       bitcoinKey: 'cUMUbDWM59EdZYagTUSoWWDdr6CXLPPuyD8P1ryRdtxxCNBcBw7p',
       loading: false,
-      loadingPercentage: 0
+      loadingPercentage: 0,
+      finished: false
     }
   },
   created() {
@@ -123,6 +124,14 @@ const dashboard = {
         video.currentTime = video.currentTime + frameSpan;
       } else {
         this.loading = false;
+        let interval = {};
+        interval = setInterval(fileUpload.poll(this.publishId).then((response) => {
+          if (response.data.status !== 204) {
+            this.finished = true;
+            clearInterval(interval);
+            document.getElementById("videoToUpload").src = response.data.file
+          }
+        }), 1000)
         // alert("done");
       }
     },
@@ -185,9 +194,9 @@ export default dashboard
   }
 }
 
-.video {
+/*.video {
   display:none;
-}
+}*/
 
 .files-info {
   display: flex;

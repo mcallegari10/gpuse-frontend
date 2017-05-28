@@ -20,4 +20,11 @@ fileUpload.uploadFrames = function (published_code_id, index, file) {
     })
 }
 
+fileUpload.poll = function (published_code_id) {
+  return api.post('/publishers/completed_publication', { published_code_id })
+  .then((response) => {
+      return response
+  })
+}
+
 export default fileUpload
