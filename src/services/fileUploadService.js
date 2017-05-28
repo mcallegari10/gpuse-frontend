@@ -1,9 +1,12 @@
-import axios from 'axios'
+import api from './api'
 
-const fileUpload = {
-  baseUrl: 'http://gpuse-api.herokuapp.com/'
+const fileUpload = {}
+
+fileUpload.upload = function (frames_attributes, code = 'asd') {
+  return api.post('/publishers/publish', { code, frames_attributes })
+  .then((response) => {
+      return response
+    })
 }
-
-fileUpload.upload = function (data) { }
 
 export default fileUpload

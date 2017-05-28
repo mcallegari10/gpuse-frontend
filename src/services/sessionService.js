@@ -1,17 +1,15 @@
-import axios from 'axios'
+import api from './api'
 
-const sessionService = {
-  baseUrl: 'http://gpuse-api.herokuapp.com/'
-}
+const sessionService = { }
 
 sessionService.login = function (username, password) {
-  return axios.get(`${this.baseUrl}publishers/sign_in?username=${username}&password=${password}`).then((response) => {
+  return api.get('/publishers/sign_in?username='+username+'&password=' + password).then((response) => {
     return response.data
   })
 }
 
 sessionService.signUp = function (username, password) {
-  return axios.post(`${this.baseUrl}publishers/sign_up`, { username, password }).then((response) => {
+  return api.post('/publishers/sign_up', { username, password }).then((response) => {
     return response.data
   })
 }

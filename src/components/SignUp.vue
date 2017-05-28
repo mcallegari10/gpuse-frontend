@@ -14,9 +14,6 @@
       label.data-label(for='confirmPassword')
         | Confirmar contraseña
       input.data-input(type='password' v-model='confirmPassword' v-validate='"required|min: 2"' maxlength='52' name='confirmPassword')
-      label.data-label(for='ethAddress')
-        | Cuenta Etherium
-      input.data-input(type='text' v-model='ethAddress' maxlength='52' name='ethAddress')
       .buttons-container
         button.login-button(type='submit')
           | Registrarme
@@ -32,7 +29,6 @@ const signUp = {
       email: '',
       password: '',
       confirmPassword: '',
-      ethAddress: '',
       showError: false
     }
   },

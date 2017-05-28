@@ -13,9 +13,7 @@ auth.isLoggedIn = function () {
 }
 
 auth.getAuthHeader = function () {
-  return {
-    Authorization: `${localStorage.getItem('access_token')}`
-  }
+  return localStorage.getItem('access_token')
 }
 
 export default auth
