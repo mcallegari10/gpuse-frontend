@@ -6,7 +6,7 @@
         | Procesamiento de
       h3.title-2
         | Imágenes y videos
-    .files-info(v-show='!loading')
+    .files-info(v-show='!loading && !finished')
       .files-inputs
         h5.step
           | Paso 1
@@ -38,14 +38,21 @@
             label.label
               | Ingresa tu private key de Bitcoin
             input.data-input(:value='bitcoinKey' type='text')
-    .loader(v-show='loading')
+    .loader(v-show='loading && loadingPercentage < 100')
       grid-loader
       h1
         | %{{ loadingPercentage }}
+    .loader(v-show='loading && loadingPercentage === 100')
+      h1
+        | Se envió de forma correcta
+    .result(v-show='finished')
+      .video-result
+        video#videoReturned(controls)
+      .bitcoin
 </template>
 
 <script>
-import GridLoader from 'vue-spinner/src/GridLoader.vue';
+import GridLoader from 'vue-spinner/src/GridLoader.vue'
 import fileUpload from '../services/fileUploadService.js'
 
 const dashboard = {
@@ -129,7 +136,7 @@ const dashboard = {
           if (response.data.status !== 204) {
             this.finished = true;
             clearInterval(interval);
-            document.getElementById("videoToUpload").src = response.data.file
+            document.getElementById("videoReturned").src = response.data.file
           }
         }), 1000)
         // alert("done");
@@ -194,9 +201,9 @@ export default dashboard
   }
 }
 
-/*.video {
+.video {
   display:none;
-}*/
+}
 
 .files-info {
   display: flex;
