@@ -4,7 +4,9 @@ import Vue from 'vue'
 import VeeValidate from 'vee-validate'
 import App from './App'
 import router from './router'
+import loadVideo from './services/videoLoader';
 
+window.loadVideo = loadVideo;
 Vue.config.productionTip = false
 Vue.use(VeeValidate)
 

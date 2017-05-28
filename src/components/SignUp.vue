@@ -40,10 +40,8 @@ const signUp = {
   methods: {
     signUp() {
       sessionService.signUp(this.email, this.password).then((response) => {
-        debugger
         this.$router.push({ name: 'dashboard' })
       }).catch((error) => {
-        debugger
         this.showError = true
       })
     }

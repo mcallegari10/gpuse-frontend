@@ -1,20 +1,18 @@
 <template lang="pug">
   .dashboard
+    button(type='button' @click='requestPublishId')
+      | Pedit trabajo
     form.image-upload(@submit.prevent='uploadImage' enctype='multipart/form-data' novalidate)
       label
         | Imagen
       input#imageUpload(@change='onFileChange' type='file' name='image' accept='image/*')
-      label
-        | Codigo
-      input#codeUpload(@change.prevent='codeFileChange($event.target.name, $event.target.files)' type='file' name='code' accept='image/*')
       button(type='submit')
         | Subir trabajo
-    form.video-upload
-      input#videoInput(@change.prevent='changeVideoPath' type='file' accept='video/*')
+    .video-upload
+      input#videoInput( @change='changeVideoPath' type='file' accept='video/*')
       .video(v-if='videoShow')
-        video#videoToUpload(controls)
+        video#videoToUpload(controls @loadeddata='advanceTime' @seeked='advanceTime')
           source(:src='videoSrc')
-    .thumbnails
 </template>
 
 <script>
@@ -26,12 +24,21 @@ const dashboard = {
     return {
       imageFile: new FormData(),
       codeFile: new FormData(),
-      videoShow: false,
+      videoShow: true,
       videoSrc: '',
-      image: ''
+      image: '',
+      code: '',
+      frameIndex: 0,
+      publishId: ''
     }
   },
   methods: {
+    requestPublishId() {
+      fileUpload.upload().then((response) => {
+        console.log(response)
+        this.publishId = response.data.published_code_id;
+      })
+    },
     onFileChange(event) {
       const files = event.target.files || event.dataTransfer.files;
       if (!files.length)
@@ -49,16 +56,54 @@ const dashboard = {
       reader.readAsDataURL(file);
     },
     uploadImage() {
-      const attr = [{
-        index: 0,
-        file: this.image
-      }];
-      fileUpload.upload(attr).then((response)=> {
+      fileUpload.uploadFrames(this.publishId, 0, this.image).then((response)=> {
         console.log(response)
       }).catch((error) => {
         console.log(error)
       })
+    },
+    changeVideoPath(event) {
+      const URL = window.URL || window.webkitURL;
+      const file = document.getElementById('videoInput').files[0]
+      const type = file.type
+      const videoNode = document.querySelector('video')
+      let canPlay = videoNode.canPlayType(type)
+      if (canPlay === '') canPlay = 'no'
+      const message = 'Can play type "' + type + '": ' + canPlay
+      const isError = canPlay === 'no'
 
+      if (isError) {
+        return
+      }
+
+      const fileURL = URL.createObjectURL(file)
+      videoNode.src = fileURL
+    },
+    advanceTime() {
+      const video = document.getElementById("videoToUpload");
+      this.generateThumbnail(video);
+      // debugger;
+      const frameSpan = 1/30;
+      if (video.currentTime + frameSpan <= video.duration){
+        video.currentTime = video.currentTime + frameSpan;
+      } else {
+        alert("done");
+      }
+    },
+    generateThumbnail(video) {
+      var c = document.createElement("canvas");
+      var ctx = c.getContext("2d");
+      c.width = video.videoWidth;
+      c.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+      const img = c.toDataURL('image/png', 1.0);
+      this.frameIndex++;
+      fileUpload.uploadFrames(this.publishId, this.frameIndex, img).then((response)=> {
+        console.log(response)
+      }).catch((error) => {
+        console.log(error)
+      })
+      //document.getElementById("app").appendChild(c);
     }
   }
 }
@@ -66,5 +111,8 @@ const dashboard = {
 export default dashboard
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .video {
+    display:none;
+  }
 </style>
