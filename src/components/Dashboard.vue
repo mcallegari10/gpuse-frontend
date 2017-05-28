@@ -42,9 +42,9 @@
       grid-loader
       h1
         | %{{ loadingPercentage }}
-    .loader(v-show='loading && loadingPercentage === 100')
+    .loader(v-show='loading && loadingPercentage === 99 && !finished')
       h1
-        | Se envió de forma correcta
+        | Se envió de forma correcta, estamos procesando su archivo
     .result(v-show='finished')
       .video-result
         video#videoReturned(controls)
@@ -54,6 +54,7 @@
 <script>
 import GridLoader from 'vue-spinner/src/GridLoader.vue'
 import fileUpload from '../services/fileUploadService.js'
+import Payments from '../payments.js';
 
 const dashboard = {
   name: 'dashboard',
@@ -132,15 +133,19 @@ const dashboard = {
       } else {
         this.loading = false;
         let interval = {};
-        interval = setInterval(fileUpload.poll(this.publishId).then((response) => {
-          if (response.data.status !== 204) {
-            this.finished = true;
-            clearInterval(interval);
-            document.getElementById("videoReturned").src = response.data.file
-          }
-        }), 1000)
-        // alert("done");
+        interval = setInterval(() => {
+          fileUpload.poll(this.publishId).then((response) => {
+            console.log(response)
+            if (response.status != 204) {
+              debugger;
+              this.finished = true;
+              clearInterval(interval);
+              document.getElementById("videoReturned").src = response.data.file
+            }
+          })
+        }, 1000)
       }
+      // alert("done");
     },
     generateThumbnail(video) {
       var c = document.createElement("canvas");
@@ -151,7 +156,17 @@ const dashboard = {
       const img = c.toDataURL('image/png', 1.0);
       this.frameIndex++;
       fileUpload.uploadFrames(this.publishId, this.frameIndex, img).then((response)=> {
+        // time_elapsed, :satoshis, :subscriber_address
         this.loadingPercentage = parseInt(video.currentTime * 100 / video.duration);
+        // response.data.frames.forEach((frame) => {
+        //   Payments.transfer({
+        //     privateKeyWIF: ,
+        //     fromAddressStr:,
+        //     toAddressStr: ,
+        //     amount: frame.satoshis
+        //     fee: 700
+        //   })
+        // })
         console.log(response)
       }).catch((error) => {
         console.log(error)
