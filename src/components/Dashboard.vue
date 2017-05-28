@@ -1,18 +1,42 @@
 <template lang="pug">
   .dashboard
-    button(type='button' @click='requestPublishId')
-      | Pedit trabajo
-    form.image-upload(@submit.prevent='uploadImage' enctype='multipart/form-data' novalidate)
-      label
-        | Imagen
-      input#imageUpload(@change='onFileChange' type='file' name='image' accept='image/*')
-      button(type='submit')
-        | Subir trabajo
-    .video-upload
-      input#videoInput( @change='changeVideoPath' type='file' accept='video/*')
-      .video(v-if='videoShow')
-        video#videoToUpload(controls @loadeddata='advanceTime' @seeked='advanceTime')
-          source(:src='videoSrc')
+    .page-title
+      h3.title
+        | Procesamiento de
+      h3.title-2
+        | Imágenes y videos
+    .files-info
+      .files-inputs
+        h5.step
+          | Paso 1
+        .file-uploads
+          form.upload.margin-left-40(@submit.prevent='uploadImage' enctype='multipart/form-data' novalidate)
+            label.label
+              | Adjunta una imagen
+            input#imageUpload(@change='onFileChange' type='file' name='image' accept='image/*')
+            button.upload-button(type='submit')
+              | Subir imagen
+          form.upload(@submit.prevent='advanceTime')
+            label.label
+              | Adjunta un video
+            input#videoInput(@change='changeVideoPath' type='file' accept='video/*')
+            .video(v-if='videoShow')
+              video#videoToUpload(@seeked='advanceTime')
+                source(:src='videoSrc')
+            button.upload-button(type='submit')
+              | Subir video
+      .bit-coin
+        h5.step
+          | Paso 2
+        form.bitcoin-form(@submit='')
+          .address
+            label.label
+              | Ingresa tu dirección de Bitcoin
+            input.data-input(:value='bitcoinAddress' type='text')
+          .key
+            label.label
+              | Ingresa tu private key de Bitcoin
+            input.data-input(:value='bitcoinKey' type='text')
 </template>
 
 <script>
@@ -23,22 +47,22 @@ const dashboard = {
   data() {
     return {
       imageFile: new FormData(),
-      codeFile: new FormData(),
       videoShow: true,
       videoSrc: '',
       image: '',
-      code: '',
       frameIndex: 0,
-      publishId: ''
+      publishId: '',
+      bitcoinAddress: 'mm9vjEnJth96Zh9XNkmLizqyPAekCUWALt',
+      bitcoinKey: 'cUMUbDWM59EdZYagTUSoWWDdr6CXLPPuyD8P1ryRdtxxCNBcBw7p'
     }
   },
+  created() {
+    fileUpload.upload().then((response) => {
+      console.log(response)
+      this.publishId = response.data.published_code_id;
+    })
+  },
   methods: {
-    requestPublishId() {
-      fileUpload.upload().then((response) => {
-        console.log(response)
-        this.publishId = response.data.published_code_id;
-      })
-    },
     onFileChange(event) {
       const files = event.target.files || event.dataTransfer.files;
       if (!files.length)
@@ -82,7 +106,6 @@ const dashboard = {
     advanceTime() {
       const video = document.getElementById("videoToUpload");
       this.generateThumbnail(video);
-      // debugger;
       const frameSpan = 1/30;
       if (video.currentTime + frameSpan <= video.duration){
         video.currentTime = video.currentTime + frameSpan;
@@ -103,7 +126,6 @@ const dashboard = {
       }).catch((error) => {
         console.log(error)
       })
-      //document.getElementById("app").appendChild(c);
     }
   }
 }
@@ -112,7 +134,91 @@ export default dashboard
 </script>
 
 <style lang="scss" scoped>
-  .video {
-    display:none;
+@import "../scss/variables";
+
+.page-title {
+  background-image: url('../assets/wireframes.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  color: $white;
+  font-size: 32px;
+
+  .title {
+    margin: 0;
   }
+
+  .title-2 {
+    margin-top: 5px;
+  }
+}
+
+.file-uploads {
+  display: flex;
+
+  .upload {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.video {
+  display:none;
+}
+
+.files-info {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step {
+  text-align: center;
+  color: $green-1;
+  font-size: 18px;
+}
+
+.margin-left-40 {
+  margin-right: 40px;
+}
+
+.label {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  margin-right: 10px;
+}
+
+.upload-button {
+  margin-top: 15px;
+  background-color: $green-1;
+  border: none;
+  border-radius: 20px;
+  color: $white;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  margin-right: 20px;
+  width: 100%;
+}
+
+.bitcoin-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.data-input {
+  background-color: $grey-1;
+  border: none;
+  height: 40px;
+  padding: 0 12px;
+  margin: 10px 0 20px;
+}
 </style>

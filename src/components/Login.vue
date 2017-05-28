@@ -1,7 +1,7 @@
 <template lang="pug">
   .login-container
-    h2.title
-      | Login
+    h1.title
+      | Bienvenido a GPUse
     form.login-data(@submit.prevent='login' novalidate)
       span.error(v-if='showError')
         | El usuario y/o contraseña son incorrectos
@@ -61,4 +61,66 @@ export default login
 </script>
 
 <style lang="scss" scoped>
+@import "../scss/variables";
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 110px auto;
+
+  .title {
+    font-weight: bold;
+  }
+
+  .login-data {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 540px;
+
+    .data-input {
+      background-color: $grey-1;
+      border: none;
+      height: 40px;
+      padding: 0 12px;
+      margin: 10px 0 20px;
+    }
+
+    .data-label {
+      color: $grey-4;
+      line-height: 19px;
+    }
+
+    .error {
+      color: $red;
+      font-size: 14px;
+      font-weight: 100;
+      align-self: center;
+    }
+
+    .buttons-container {
+      display: flex;
+      align-items: center;
+
+      .login-button {
+        background-color: $green-1;
+        border: none;
+        border-radius: 20px;
+        color: $white;
+        display: flex;
+        height: 40px;
+        justify-content: center;
+        margin-right: 20px;
+        width: 175px;
+      }
+
+      .register {
+        text-decoration: none;
+        border: none;
+        background-color: $white;
+      }
+    }
+  }
+}
 </style>
