@@ -4,11 +4,7 @@ import Vue from 'vue'
 import VeeValidate from 'vee-validate'
 import App from './App'
 import router from './router'
-import loadVideo from './services/videoLoader';
-import Payments from './payments.js'
 
-window.loadVideo = loadVideo;
-window.Payments = Payments;
 Vue.config.productionTip = false
 Vue.use(VeeValidate)
 

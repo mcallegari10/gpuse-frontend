@@ -41,6 +41,7 @@
 
 <script>
 import fileUpload from '../services/fileUploadService.js'
+import axios from 'axios'
 
 const dashboard = {
   name: 'dashboard',
