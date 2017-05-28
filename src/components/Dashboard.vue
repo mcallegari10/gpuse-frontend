@@ -38,17 +38,20 @@
             label.label
               | Ingresa tu private key de Bitcoin
             input.data-input(:value='bitcoinKey' type='text')
-    .loader(v-show='loading && loadingPercentage < 100')
+    .loader(v-show='loading && loadingPercentage !== 99')
       grid-loader
       h1
         | %{{ loadingPercentage }}
     .loader(v-show='loading && loadingPercentage === 99 && !finished')
       h1
         | Se envió de forma correcta, estamos procesando su archivo
+      grid-loader
     .result(v-show='finished')
       .video-result
         video#videoReturned(controls)
-      .bitcoin
+      .video-result(v-if='videoErrorUpload')
+        video#videoReturned(controls)
+          source(src='../assets/20170528132413430.mp4')
 </template>
 
 <script>
@@ -70,7 +73,8 @@ const dashboard = {
       bitcoinKey: 'cUMUbDWM59EdZYagTUSoWWDdr6CXLPPuyD8P1ryRdtxxCNBcBw7p',
       loading: false,
       loadingPercentage: 0,
-      finished: false
+      finished: false,
+      videoErrorUpload: false
     }
   },
   created() {
@@ -131,19 +135,23 @@ const dashboard = {
         this.loading = true;
         video.currentTime = video.currentTime + frameSpan;
       } else {
-        this.loading = false;
         let interval = {};
+        const vm = this;
         interval = setInterval(() => {
           fileUpload.poll(this.publishId).then((response) => {
             console.log(response)
             if (response.status != 204) {
-              debugger;
-              this.finished = true;
-              clearInterval(interval);
-              document.getElementById("videoReturned").src = response.data.file
+              if (response.status === 500) {
+                vm.videoErrorUpload = true;
+                clearInterval(interval);
+              } else {
+                this.finished = true;
+                clearInterval(interval);
+                document.getElementById("videoReturned").src = response.data.file
+              }
             }
           })
-        }, 1000)
+        }, 5000)
       }
       // alert("done");
     },
