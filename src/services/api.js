@@ -7,5 +7,4 @@ export default axios.create({
   headers: {
     Authorization: localStorage.getItem('access_token')
   }
-  // baseUrl: 'http://gpuse-api.herokuapp.com'
 })
