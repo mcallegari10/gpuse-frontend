@@ -1,3 +1,4 @@
+
 <template lang="pug">
   .dashboard
     .page-title
@@ -5,7 +6,7 @@
         | Procesamiento de
       h3.title-2
         | Imágenes y videos
-    .files-info
+    .files-info( v-show='!loading')
       .files-inputs
         h5.step
           | Paso 1
@@ -37,11 +38,15 @@
             label.label
               | Ingresa tu private key de Bitcoin
             input.data-input(:value='bitcoinKey' type='text')
+    .loader(v-show='loading')
+      pulse-loader
+      h1
+        | %{{ loadingPercentage }}
 </template>
 
 <script>
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import fileUpload from '../services/fileUploadService.js'
-import axios from 'axios'
 
 const dashboard = {
   name: 'dashboard',
@@ -54,7 +59,9 @@ const dashboard = {
       frameIndex: 0,
       publishId: '',
       bitcoinAddress: 'mm9vjEnJth96Zh9XNkmLizqyPAekCUWALt',
-      bitcoinKey: 'cUMUbDWM59EdZYagTUSoWWDdr6CXLPPuyD8P1ryRdtxxCNBcBw7p'
+      bitcoinKey: 'cUMUbDWM59EdZYagTUSoWWDdr6CXLPPuyD8P1ryRdtxxCNBcBw7p',
+      loading: false,
+      loadingPercentage: 0
     }
   },
   created() {
@@ -81,9 +88,12 @@ const dashboard = {
       reader.readAsDataURL(file);
     },
     uploadImage() {
+      this.loading = true;
       fileUpload.uploadFrames(this.publishId, 0, this.image).then((response)=> {
+        this.loading = false;
         console.log(response)
       }).catch((error) => {
+        this.loading = false;
         console.log(error)
       })
     },
@@ -109,9 +119,11 @@ const dashboard = {
       this.generateThumbnail(video);
       const frameSpan = 1/30;
       if (video.currentTime + frameSpan <= video.duration){
+        this.loading = true;
         video.currentTime = video.currentTime + frameSpan;
       } else {
-        alert("done");
+        this.loading = false;
+        // alert("done");
       }
     },
     generateThumbnail(video) {
@@ -123,11 +135,15 @@ const dashboard = {
       const img = c.toDataURL('image/png', 1.0);
       this.frameIndex++;
       fileUpload.uploadFrames(this.publishId, this.frameIndex, img).then((response)=> {
+        this.loadingPercentage = parseInt(video.currentTime * 100 / video.duration);
         console.log(response)
       }).catch((error) => {
         console.log(error)
       })
     }
+  },
+  components: {
+    PulseLoader
   }
 }
 

@@ -20,11 +20,4 @@ fileUpload.uploadFrames = function (published_code_id, index, file) {
     })
 }
 
-// fileUpload.upload = function (code = 'asd') {
-//   return api.post('/publishers/completed', { code })
-//   .then((response) => {
-//       return response
-//     })
-// }
-
 export default fileUpload
